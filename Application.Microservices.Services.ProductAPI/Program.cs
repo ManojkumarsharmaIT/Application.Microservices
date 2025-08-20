@@ -1,16 +1,15 @@
-using System.Text;
-using Application.Microservices.Services.CouponAPI;
-using Application.Microservices.Services.CouponAPI.Data;
-using Application.Microservices.Services.CouponAPI.Extensions;
+using Application.Microservices.Services.PrductAPI.Extensions;
+using Application.Microservices.Services.ProductAPI;
+using Application.Microservices.Services.ProductAPI.Data;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 
 // Register DbContext with SQL Server
 builder.Services.AddDbContext<AppDbContext>(option =>
@@ -27,6 +26,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //Swagger Token Passing 
 builder.Services.AddSwaggerGen(option =>
@@ -68,10 +68,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
 ApplyMigration();
 app.Run();
 
@@ -80,10 +81,10 @@ app.Run();
 // Apply Migration used to apply pending Migration to the database
 void ApplyMigration()
 {
-    using(var scope = app.Services.CreateScope())
+    using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        if(dbContext.Database.GetPendingMigrations().Count()>0)
-                 dbContext.Database.Migrate();
+        if (dbContext.Database.GetPendingMigrations().Count() > 0)
+            dbContext.Database.Migrate();
     }
 }
