@@ -1,0 +1,14 @@
+﻿using Application.Microservices.Services.Web.Models;
+using Application.Microservices.Web.Models;
+
+namespace Application.Microservices.Web.Service.IService
+{
+    public interface ICartService
+    {
+        Task<ResponseDto?> GetCartByUserIdAsnyc(string userId);
+        Task<ResponseDto?> UpsertCartAsync(CartDto cartDto);
+        Task<ResponseDto?> RemoveFromCartAsync(int cartDetailsId);
+        Task<ResponseDto?> ApplyCouponAsync(CartDto cartDto);
+        Task<ResponseDto?> EmailCart(CartDto cartDto);
+    }
+}
