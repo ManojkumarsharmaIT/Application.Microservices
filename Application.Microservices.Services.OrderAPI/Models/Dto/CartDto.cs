@@ -1,7 +1,5 @@
-﻿
-namespace Application.Microservices.Web.Models
+﻿namespace Application.Microservices.Services.OrderAPI.Models.Dto
 {
-
     public class CartDto
     {
         public CartHeaderDto CartHeader { get; set; }

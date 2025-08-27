@@ -1,16 +1,19 @@
-using System.Text;
-using Application.Microservices.Services.CouponAPI;
-using Application.Microservices.Services.CouponAPI.Data;
-using Application.Microservices.Services.CouponAPI.Extensions;
+
+using Application.Microservices.Services.OrderAPI;
+using Application.Microservices.Services.OrderAPI.Data;
+using Application.Microservices.Services.OrderAPI.Extensions;
+using Application.Microservices.Services.OrderAPI.Service;
+using Application.Microservices.Services.OrderAPI.Service.IService;
+using Application.Microservices.Services.OrderAPI.Utility;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 
 // Register DbContext with SQL Server
 builder.Services.AddDbContext<AppDbContext>(option =>
@@ -25,8 +28,18 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+
+//Delegate Handler for passing JWT token to downstream services 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+
+builder.Services.AddHttpClient("Product", u => u.BaseAddress =
+new Uri(builder.Configuration["ServiceUrls:ProductAPI"])).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //Swagger Token Passing 
 builder.Services.AddSwaggerGen(option =>
@@ -66,13 +79,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 Stripe.StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
+
 app.UseHttpsRedirection();
-app.UseAuthorization();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
 ApplyMigration();
 app.Run();
 
@@ -81,10 +97,10 @@ app.Run();
 // Apply Migration used to apply pending Migration to the database
 void ApplyMigration()
 {
-    using(var scope = app.Services.CreateScope())
+    using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        if(dbContext.Database.GetPendingMigrations().Count()>0)
-                 dbContext.Database.Migrate();
+        if (dbContext.Database.GetPendingMigrations().Count() > 0)
+            dbContext.Database.Migrate();
     }
 }

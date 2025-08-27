@@ -1,5 +1,4 @@
-﻿using Application.Microservices.Services.Web.Models;
-using Application.Microservices.Web.Models;
+﻿using Application.Microservices.Web.Models;
 
 namespace Application.Microservices.Web.Service.IService
 {
