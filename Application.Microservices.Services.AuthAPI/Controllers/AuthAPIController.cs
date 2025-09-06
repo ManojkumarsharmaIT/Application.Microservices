@@ -1,4 +1,5 @@
-﻿using Application.Microservices.Services.AuthAPI.Models.Dto;
+﻿using Applicatin.Microservices.Integration.MessageBus;
+using Application.Microservices.Services.AuthAPI.Models.Dto;
 using Application.Microservices.Services.AuthAPI.Service.IService;
 using Azure;
 using Microsoft.AspNetCore.Authorization;
@@ -14,21 +15,28 @@ namespace Application.Microservices.Services.AuthAPI.Controllers
 
         private readonly IAuthService _authService;
         protected ResponseDto _response;
+        private readonly IMessageBus _messageBus;
+        private readonly IConfiguration _configuration;
 
-        public AuthAPIController(IAuthService authService)
+        public AuthAPIController(IAuthService authService, IMessageBus messageBus, IConfiguration configuration)
         {
             _authService = authService;
             _response = new();
+            _messageBus = messageBus;   
+            _configuration = configuration;
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDto model)
         {
             var errormessage = await _authService.Register(model);
-            if (!string.IsNullOrEmpty(errormessage)) { 
+            if (!string.IsNullOrEmpty(errormessage))
+            {
                 _response.IsSuccess = false;
                 _response.Message = errormessage;
-            return BadRequest(_response);
+                return BadRequest(_response);
             }
+            await _messageBus.PublishMessage(model.Email, _configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue"));
+
             return Ok(_response);
         }
 

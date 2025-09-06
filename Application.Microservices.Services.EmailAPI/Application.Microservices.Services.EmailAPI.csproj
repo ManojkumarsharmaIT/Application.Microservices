@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,6 +9,7 @@
   <ItemGroup>
 	  <PackageReference Include="AutoMapper" Version="12.0.1" />
 	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+	  <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
@@ -21,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Applicatin.Microservices.Integration.MessageBus\Applicatin.Microservices.Integration.MessageBus.csproj" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

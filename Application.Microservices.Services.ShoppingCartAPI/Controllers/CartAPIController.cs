@@ -1,4 +1,5 @@
-﻿using Application.Microservices.Services.ShoppingCartAPI.Data;
+﻿using Applicatin.Microservices.Integration.MessageBus;
+using Application.Microservices.Services.ShoppingCartAPI.Data;
 using Application.Microservices.Services.ShoppingCartAPI.Models;
 using Application.Microservices.Services.ShoppingCartAPI.Models.Dto;
 using Application.Microservices.Services.ShoppingCartAPI.Service.IService;
@@ -18,14 +19,18 @@ namespace Application.Microservices.Services.ShoppingCartAPI.Controllers
         private IMapper _mapper;
         private readonly IProductService _productService;
         private readonly ICouponService _couponService;
+        private IConfiguration _configuration;
+        private readonly IMessageBus _messageBus;
 
-        public CartAPIController(AppDbContext db, IMapper mapper, IProductService productService, ICouponService couponService  )
+        public CartAPIController(AppDbContext db, IMapper mapper, IProductService productService, ICouponService couponService ,IMessageBus messageBus,IConfiguration configuration)
         {
             _db = db;
             _response = new ResponseDto();
             _mapper = mapper;
             _productService = productService;
             _couponService = couponService;
+            _messageBus = messageBus;
+            _configuration = configuration;
         }
 
         [HttpGet("GetCart/{userId}")]
@@ -88,6 +93,23 @@ namespace Application.Microservices.Services.ShoppingCartAPI.Controllers
             }
             return _response;
         }
+
+        [HttpPost("EmailCartRequest")]
+        public async Task<object> EmailCartRequest([FromBody] CartDto cartDto)
+        {
+            try
+            {
+                await _messageBus.PublishMessage(cartDto, _configuration.GetValue<string>("TopicAndQueueNames:EmailShoppingCartQueue"));
+                _response.Result = true;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.ToString();
+            }
+            return _response;
+        }
+
 
         [HttpPost("CartUpsert")]
         public async Task<ResponseDto> CartUpsert(CartDto cartDto)
