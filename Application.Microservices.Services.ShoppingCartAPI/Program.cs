@@ -1,3 +1,4 @@
+using Applicatin.Microservices.Integration.MessageBus;
 using Application.Microservices.Services.ShoppingCartAPI;
 using Application.Microservices.Services.ShoppingCartAPI.Data;
 using Application.Microservices.Services.ShoppingCartAPI.Extensions;
@@ -29,6 +30,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+
+builder.Services.AddScoped<IMessageBus, MessageBus>();
 
 
 //Delegate Handler for passing JWT token to downstream services 
