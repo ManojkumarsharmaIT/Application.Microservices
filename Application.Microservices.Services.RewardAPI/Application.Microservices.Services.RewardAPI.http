@@ -1,0 +1,6 @@
+@Application.Microservices.Services.RewardAPI_HostAddress = http://localhost:5066
+
+GET {{Application.Microservices.Services.RewardAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
