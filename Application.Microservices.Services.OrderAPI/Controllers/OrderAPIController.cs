@@ -1,4 +1,5 @@
-﻿using Application.Microservices.Services.OrderAPI.Data;
+﻿using Applicatin.Microservices.Integration.MessageBus;
+using Application.Microservices.Services.OrderAPI.Data;
 using Application.Microservices.Services.OrderAPI.Models;
 using Application.Microservices.Services.OrderAPI.Models.Dto;
 using Application.Microservices.Services.OrderAPI.Service.IService;
@@ -19,9 +20,10 @@ namespace Application.Microservices.Services.OrderAPI.Controllers
         private IMapper _mapper;
         private readonly AppDbContext _db;
         private IProductService _productService;
+        private readonly IMessageBus _messageBus;
         private readonly IConfiguration _configuration;
         public OrderAPIController(AppDbContext db,
-            IProductService productService, IMapper mapper, IConfiguration configuration
+            IProductService productService, IMapper mapper, IConfiguration configuration, IMessageBus messageBus
             )
         {
             _db = db;
@@ -29,6 +31,7 @@ namespace Application.Microservices.Services.OrderAPI.Controllers
             _productService = productService;
             _mapper = mapper;
             _configuration = configuration;
+            _messageBus = messageBus;
         }
 
 
@@ -39,7 +42,7 @@ namespace Application.Microservices.Services.OrderAPI.Controllers
 
             try
             {
-                OrderHeaderDto orderHeaderDto = _mapper.Map<OrderHeaderDto>(cartDto.CartHeader);
+                 OrderHeaderDto orderHeaderDto = _mapper.Map<OrderHeaderDto>(cartDto.CartHeader);
                 orderHeaderDto.OrderTime = DateTime.Now;
                 orderHeaderDto.Status = SD.Status_Pending;
                 orderHeaderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailsDto>>(cartDto.CartDetails);
@@ -143,14 +146,14 @@ namespace Application.Microservices.Services.OrderAPI.Controllers
                     orderHeader.PaymentIntentId = paymentIntent.Id;
                     orderHeader.Status = SD.Status_Approved;
                     _db.SaveChanges();
-                    //RewardsDto rewardsDto = new()
-                    //{
-                    //    OrderId = orderHeader.OrderHeaderId,
-                    //    RewardsActivity = Convert.ToInt32(orderHeader.OrderTotal),
-                    //    UserId = orderHeader.UserId
-                    //};
-                  //  string topicName = _configuration.GetValue<string>("TopicAndQueueNames:OrderCreatedTopic");
-                //    await _messageBus.PublishMessage(rewardsDto, topicName);
+                    RewardsDto rewardsDto = new()
+                    {
+                        OrderId = orderHeader.OrderHeaderId,
+                        RewardsActivity = Convert.ToInt32(orderHeader.OrderTotal),
+                        UserId = orderHeader.UserId
+                    };
+                    string topicName = _configuration.GetValue<string>("TopicAndQueueNames:OrderCreatedTopic");
+                    await _messageBus.PublishMessage(rewardsDto, topicName);
                     _response.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
                 }
 

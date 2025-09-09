@@ -1,4 +1,5 @@
 
+using Applicatin.Microservices.Integration.MessageBus;
 using Application.Microservices.Services.OrderAPI;
 using Application.Microservices.Services.OrderAPI.Data;
 using Application.Microservices.Services.OrderAPI.Extensions;
@@ -34,7 +35,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 //Delegate Handler for passing JWT token to downstream services 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
-
+builder.Services.AddScoped<IMessageBus, MessageBus>();  
 builder.Services.AddHttpClient("Product", u => u.BaseAddress =
 new Uri(builder.Configuration["ServiceUrls:ProductAPI"])).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

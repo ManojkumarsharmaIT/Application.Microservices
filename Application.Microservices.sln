@@ -28,10 +28,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Microservices.S
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Microservices.Services.OrderAPI", "Application.Microservices.Services.OrderAPI\Application.Microservices.Services.OrderAPI.csproj", "{615F6F7E-CF0D-4E3E-B368-1B749C034AF1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{92956739-0851-4BF3-B42D-64E4B614D8E4} = {92956739-0851-4BF3-B42D-64E4B614D8E4}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Applicatin.Microservices.Integration.MessageBus", "Applicatin.Microservices.Integration.MessageBus\Applicatin.Microservices.Integration.MessageBus.csproj", "{92956739-0851-4BF3-B42D-64E4B614D8E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Microservices.Services.EmailAPI", "Application.Microservices.Services.EmailAPI\Application.Microservices.Services.EmailAPI.csproj", "{18F35E25-A746-45DB-9BF4-FE28D6528067}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Microservices.Services.RewardAPI", "Application.Microservices.Services.RewardAPI\Application.Microservices.Services.RewardAPI.csproj", "{76AF115E-11EF-4A87-99A9-16FD37C0B986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +76,10 @@ Global
 		{18F35E25-A746-45DB-9BF4-FE28D6528067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18F35E25-A746-45DB-9BF4-FE28D6528067}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18F35E25-A746-45DB-9BF4-FE28D6528067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76AF115E-11EF-4A87-99A9-16FD37C0B986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76AF115E-11EF-4A87-99A9-16FD37C0B986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76AF115E-11EF-4A87-99A9-16FD37C0B986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76AF115E-11EF-4A87-99A9-16FD37C0B986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +93,7 @@ Global
 		{615F6F7E-CF0D-4E3E-B368-1B749C034AF1} = {5AF2FC6D-09E7-450D-B21D-02199D26C4A8}
 		{92956739-0851-4BF3-B42D-64E4B614D8E4} = {BF92C0F3-A681-42D1-94A4-E6EAA5CFE6EE}
 		{18F35E25-A746-45DB-9BF4-FE28D6528067} = {5AF2FC6D-09E7-450D-B21D-02199D26C4A8}
+		{76AF115E-11EF-4A87-99A9-16FD37C0B986} = {5AF2FC6D-09E7-450D-B21D-02199D26C4A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F65FD45-6881-4BF5-9948-813DD9320A52}
