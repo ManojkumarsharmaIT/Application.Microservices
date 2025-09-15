@@ -8,9 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Microservices.Services.ProductAPI.Controllers
 {
-    [Route("api/Product")]
+    [Route("api/product")]
     [ApiController]
-    //s[Authorize]
     public class ProductAPIController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -20,10 +19,9 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
         public ProductAPIController(AppDbContext db, IMapper mapper)
         {
             _db = db;
-            _response = new ResponseDto();
             _mapper = mapper;
+            _response = new ResponseDto();
         }
-
 
         [HttpGet]
         public ResponseDto Get()
@@ -41,15 +39,14 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
             return _response;
         }
 
-
         [HttpGet]
         [Route("{id:int}")]
         public ResponseDto Get(int id)
         {
             try
             {
-                Product objList = _db.Products.First(u => u.ProductId == id);
-                _response.Result = _mapper.Map<ProductDto>(objList);
+                Product obj = _db.Products.First(u => u.ProductId == id);
+                _response.Result = _mapper.Map<ProductDto>(obj);
             }
             catch (Exception ex)
             {
@@ -58,19 +55,47 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
             }
             return _response;
         }
-
 
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDto Post([FromBody] ProductDto productDto)
+        public ResponseDto Post(ProductDto ProductDto)
         {
-
             try
             {
-                Product obj = _mapper.Map<Product>(productDto);
-                _db.Products.Add(obj);
+                Product product = _mapper.Map<Product>(ProductDto);
+                _db.Products.Add(product);
                 _db.SaveChanges();
-                _response.Result = _mapper.Map<ProductDto>(obj);
+
+                if (ProductDto.Image != null)
+                {
+
+                    string fileName = product.ProductId + Path.GetExtension(ProductDto.Image.FileName);
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+
+                    //I have added the if condition to remove the any image with same name if that exist in the folder by any change
+                    var directoryLocation = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    FileInfo file = new FileInfo(directoryLocation);
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                    }
+
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var fileStream = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        ProductDto.Image.CopyTo(fileStream);
+                    }
+                    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageUrl = baseUrl + "/ProductImages/" + fileName;
+                    product.ImageLocalPath = filePath;
+                }
+                else
+                {
+                    product.ImageUrl = "https://placehold.co/600x400";
+                }
+                _db.Products.Update(product);
+                _db.SaveChanges();
+                _response.Result = _mapper.Map<ProductDto>(product);
             }
             catch (Exception ex)
             {
@@ -78,20 +103,46 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
                 _response.Message = ex.Message;
             }
             return _response;
-
         }
+
 
         [HttpPut]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDto Put([FromBody] ProductDto productDto)
+        public ResponseDto Put(ProductDto ProductDto)
         {
-
             try
             {
-                Product obj = _mapper.Map<Product>(productDto);
-                _db.Products.Update(obj);
+                Product product = _mapper.Map<Product>(ProductDto);
+
+                if (ProductDto.Image != null)
+                {
+                    if (!string.IsNullOrEmpty(product.ImageLocalPath))
+                    {
+                        var oldFilePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), product.ImageLocalPath);
+                        FileInfo file = new FileInfo(oldFilePathDirectory);
+                        if (file.Exists)
+                        {
+                            file.Delete();
+                        }
+                    }
+
+                    string fileName = product.ProductId + Path.GetExtension(ProductDto.Image.FileName);
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var fileStream = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        ProductDto.Image.CopyTo(fileStream);
+                    }
+                    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageUrl = baseUrl + "/ProductImages/" + fileName;
+                    product.ImageLocalPath = filePath;
+                }
+
+
+                _db.Products.Update(product);
                 _db.SaveChanges();
-                _response.Result = _mapper.Map<ProductDto>(obj);
+
+                _response.Result = _mapper.Map<ProductDto>(product);
             }
             catch (Exception ex)
             {
@@ -99,7 +150,6 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
                 _response.Message = ex.Message;
             }
             return _response;
-
         }
 
         [HttpDelete]
@@ -107,13 +157,20 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
         [Authorize(Roles = "ADMIN")]
         public ResponseDto Delete(int id)
         {
-
             try
             {
                 Product obj = _db.Products.First(u => u.ProductId == id);
+                if (!string.IsNullOrEmpty(obj.ImageLocalPath))
+                {
+                    var oldFilePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), obj.ImageLocalPath);
+                    FileInfo file = new FileInfo(oldFilePathDirectory);
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                    }
+                }
                 _db.Products.Remove(obj);
                 _db.SaveChanges();
-                // _response.Result = _mapper.Map<CouponDto>(obj);
             }
             catch (Exception ex)
             {
@@ -122,5 +179,5 @@ namespace Application.Microservices.Services.ProductAPI.Controllers
             }
             return _response;
         }
-        }
     }
+}

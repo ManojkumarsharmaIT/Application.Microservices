@@ -72,7 +72,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseStaticFiles();
 ApplyMigration();
 app.Run();
 

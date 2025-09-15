@@ -1,5 +1,5 @@
-﻿using System.Net.Mime;
-using System.Security.AccessControl;
+﻿
+using Application.Microservices.Web.Utility;
 using static Application.Microservices.Web.Utility.SD;
 
 namespace Application.Microservices.Web.Models
@@ -11,6 +11,6 @@ namespace Application.Microservices.Web.Models
         public object Data { get; set; }
         public string AccessToken { get; set; }
 
-        //public ContentType ContentType { get; set; } = ContentType.Json;
+        public ContentType ContentType { get; set; }=ContentType.Json;
     }
 }

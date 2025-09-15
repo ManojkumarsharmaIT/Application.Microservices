@@ -140,7 +140,8 @@ namespace Application.Microservices.Services.OrderAPI.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)(item.Price * 100), // $20.99 -> 2099
+                            
+                            UnitAmount = (long)Math.Round(item.Price * 100),
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {

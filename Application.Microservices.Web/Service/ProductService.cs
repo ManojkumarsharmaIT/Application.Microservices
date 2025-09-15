@@ -18,7 +18,8 @@ namespace Application.Microservices.Web.Service
             {
                 ApiType = SD.ApiType.POST,
                 Data = productDto,
-                Url = SD.ProductAPIBase + "/api/Product"
+                Url = SD.ProductAPIBase + "/api/Product",
+                ContentType=SD.ContentType.MultipartFormData
             });
         }
 
@@ -56,7 +57,9 @@ namespace Application.Microservices.Web.Service
             {
                 ApiType = SD.ApiType.PUT,
                 Data = productDto,
-                Url = SD.ProductAPIBase + "/api/Product"
+                Url = SD.ProductAPIBase + "/api/Product",
+                ContentType = SD.ContentType.MultipartFormData
+
             });
         }
     }

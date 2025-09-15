@@ -1,10 +1,9 @@
-﻿using System.Net.Mime;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using Application.Microservices.Web.Models;
 using Application.Microservices.Web.Service.IService;
-using static Application.Microservices.Web.Utility.SD;
 using Newtonsoft.Json;
+using static Application.Microservices.Web.Utility.SD;
 
 namespace Application.Microservices.Web.Service
 {
@@ -24,14 +23,14 @@ namespace Application.Microservices.Web.Service
             {
                 HttpClient client = _httpClientFactory.CreateClient("ApplicationAPI");
                 HttpRequestMessage message = new();
-                //if (requestDto.ContentType == ContentType.MultipartFormData)
-                //{
-                //    message.Headers.Add("Accept", "*/*");
-                //}
-                //else
-                //{
+                if (requestDto.ContentType == ContentType.MultipartFormData)
+                {
+                    message.Headers.Add("Accept", "*/*");
+                }
+                else
+                {
                     message.Headers.Add("Accept", "application/json");
-                // }
+                }
                
                 
                 // Passing token to Swagger API
@@ -43,35 +42,35 @@ namespace Application.Microservices.Web.Service
 
                 message.RequestUri = new Uri(requestDto.Url);
 
-                //if (requestDto.ContentType == ContentType.MultipartFormData)
-                //{
-                //    var content = new MultipartFormDataContent();
+                if (requestDto.ContentType == ContentType.MultipartFormData)
+                {
+                    var content = new MultipartFormDataContent();
 
-                //    foreach (var prop in requestDto.Data.GetType().GetProperties())
-                //    {
-                //        var value = prop.GetValue(requestDto.Data);
-                //        if (value is FormFile)
-                //        {
-                //            var file = (FormFile)value;
-                //            if (file != null)
-                //            {
-                //                content.Add(new StreamContent(file.OpenReadStream()), prop.Name, file.FileName);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            content.Add(new StringContent(value == null ? "" : value.ToString()), prop.Name);
-                //        }
-                //    }
-                //    message.Content = content;
-                //}
-                //else
-                //{
+                    foreach (var prop in requestDto.Data.GetType().GetProperties())
+                    {
+                        var value = prop.GetValue(requestDto.Data);
+                        if (value is FormFile)
+                        {
+                            var file = (FormFile)value;
+                            if (file != null)
+                            {
+                                content.Add(new StreamContent(file.OpenReadStream()), prop.Name, file.FileName);
+                            }
+                        }
+                        else
+                        {
+                            content.Add(new StringContent(value == null ? "" : value.ToString()), prop.Name);
+                        }
+                    }
+                    message.Content = content;
+                }
+                else
+                {
                     if (requestDto.Data != null)
                     {
                         message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
                     }
-                //}
+                }
 
 
 
