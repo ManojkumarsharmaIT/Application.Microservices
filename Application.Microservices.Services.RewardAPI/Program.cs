@@ -31,7 +31,7 @@ app.UseSwaggerUI(c =>
 {
     if (!app.Environment.IsDevelopment())
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cart API");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reward API");
         c.RoutePrefix = string.Empty;
     }
 });

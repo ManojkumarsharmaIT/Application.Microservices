@@ -123,7 +123,7 @@ namespace Application.Microservices.Services.OrderAPI.Controllers
                     CancelUrl = stripeRequestDto.CancelUrl,
                     LineItems = new List<SessionLineItemOptions>(),
                     Mode = "payment",
-                    Locale="en"
+                    Locale="auto"
                 };
 
                 var DiscountsObj = new List<SessionDiscountOptions>()
