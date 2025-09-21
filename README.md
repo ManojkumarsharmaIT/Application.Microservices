@@ -59,7 +59,7 @@ I also learned and implemented **Azure Cloud services** to deploy this project:
 - **Azure App Service** – Published the microservices and MVC Web App  
 - **Azure SQL Database** – Hosted databases for each microservice  
 - **Azure Service Bus** – Used for asynchronous communication between microservices  
-- **CI/CD with Azure App Service** – Deployed directly from Visual Studio  
+- **Publish with Azure App Service** – Deployed directly from Visual Studio  
 
 This gave me real-world experience in deploying and running microservices in a cloud environment.  
 
